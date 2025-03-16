@@ -8,6 +8,10 @@ class Plan(models.Model):
     mensualidad = models.DecimalField(decimal_places=2, null=False, max_digits=10)
     inscripcion = models.DecimalField(decimal_places=2, null=False, max_digits=10)
     
+    #substring
+    def __str__(self):
+        return self.id_plan
+    
 class Cliente(models.Model):
     #campos de la tabla
     curp = models.CharField(max_length=18, primary_key=True, null=False)
@@ -19,6 +23,9 @@ class Cliente(models.Model):
     #relacion
     id_plan = models.ForeignKey(Plan, on_delete=models.SET_NULL, null=True)
     
+    def __str__(self):
+        return self.curp
+    
 class Pago(models.Model):
     #campos de la tabla
     id_pago = models.AutoField(primary_key=True)
@@ -26,6 +33,7 @@ class Pago(models.Model):
     fecha_pago = models.DateField(null=False)
     tipo = models.CharField(max_length=20, null=False)
     retrasado = models.BooleanField(null=False)
-    curp = models.ForeignKey(Cliente, on_delete=models.CASCADE)    
+    curp = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     
-    
+    def __str__(self):
+        return self.id_pago

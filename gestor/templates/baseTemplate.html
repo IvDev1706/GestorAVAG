@@ -1,0 +1,32 @@
+{# cargar los recursos estaticos #}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor AVAG - {{context}}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}"/>
+    {%block styles%}
+    {%endblock%}
+</head>
+<body>
+    <header class="head">
+        <h1>Gestor de pagos AVAG - Administrador</h1>
+    </header>
+    <nav class="navigate">
+        <a href="/alumno">ver alumnos</a>
+        <a href="/alumno/create">registrar alumno</a>
+        <a href="/alumno/update">actualizar alumno</a>
+        <a href="/alumno/delete">eliminar alumno</a>
+    </nav>
+    {# zona de contenido #}
+    {% block content %}
+    {% endblock %}
+
+    <footer class="foot">
+        <h3>Equipo 1 IGS Copyright@ 2025</h3>
+        <h4>Derechos de logo y nombre a Team Tigers AVAG</h4>
+    </footer>
+</body>
+</html>

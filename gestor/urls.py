@@ -3,8 +3,10 @@ from .views import *
 
 #rutas de la aplicacion "gestor"
 urlpatterns = [
-    path('', home), # vacio es igual a / (raiz)
-    path('create', createAlumno),
-    path('update', updateAulmno),
-    path('delete', deleteAlumno)
+    path('', login),
+    path('alumno/', index), # vacio es igual a / (raiz)
+    path('alumno/create', createAlumno),
+    path('alumno/update', updateAulmno),
+    path('alumno/delet', deleteAlumno),
+    path('plan/<str:id_pl>', showPlan)#ruta con parametro
 ]

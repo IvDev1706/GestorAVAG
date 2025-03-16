@@ -1,0 +1,13 @@
+{% extends "baseTemplate.html" %}
+
+{% block content %}
+    <div class="box-content">
+        <h2>Datos del nuevo alumno</h2>
+        <form method="POST">
+            {# clave para formulario #}
+            {% csrf_token %}
+            {{form}}
+            <input type="submit" value="registrar"/>
+        </form>
+    </div>
+{% endblock %}
