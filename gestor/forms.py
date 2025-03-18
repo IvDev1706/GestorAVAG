@@ -1,7 +1,8 @@
 from django import forms
+from django.contrib.auth import authenticate
 from .models import Plan
 
-#clase de formulario
+#clase de formulario de registro
 class registerClient(forms.Form):
     #campos del formulario
     curp = forms.CharField(label="CURP:",max_length=18)
@@ -11,3 +12,9 @@ class registerClient(forms.Form):
     correo = forms.EmailField(label="Correo electronico:",max_length=30)
     fecha_nac = forms.DateField(label="Fecha de nacimiento:")
     id_plan = forms.ModelChoiceField(queryset=Plan.objects.all())#id de modelos
+
+#clase de formulario de login
+class loginForm(forms.Form):
+    #campos del formulario
+    user = forms.CharField(label="Nombre de usuario:",max_length=20)
+    password = forms.CharField(label="Contraseña:",max_length=20,widget=forms.PasswordInput)

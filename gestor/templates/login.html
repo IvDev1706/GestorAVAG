@@ -3,13 +3,12 @@
 {% block content %}
 <div class="box-content">
     <h2>Acceso al panel de administrador</h2>
+    {{error}}
     <hr>
     <form method="post" action=''>
-        <label for="user">User:</label><br>
-        <input type="text" id="user" name="user"/><br>
-        <label for="pass">User:</label><br>
-        <input type="password" id="pass" name="pass"/><br>
-        <input type="submit" value="acceder"/><br>
+        {% csrf_token %}
+        {{form}}
+        <button type="submit">acceder</button>
     </form>
 </div>
 {% endblock %}

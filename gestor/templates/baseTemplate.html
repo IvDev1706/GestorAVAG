@@ -18,7 +18,13 @@
         <a href="/alumno">ver alumnos</a>
         <a href="/alumno/create">registrar alumno</a>
         <a href="/alumno/update">actualizar alumno</a>
-        <a href="/alumno/delete">eliminar alumno</a>
+        <a href="/alumno/delet">eliminar alumno</a>
+        <a href="/pago/register">registrar pago</a>
+        {# formulario de cierre de sesion #}
+        <form method="POST" action="/logout/">
+            {% csrf_token %}
+            <button type="submit">cerrar sesion</button>
+        </form>
     </nav>
     {# zona de contenido #}
     {% block content %}
