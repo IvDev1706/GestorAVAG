@@ -21,10 +21,12 @@
         <a href="/alumno/delet">eliminar alumno</a>
         <a href="/pago/register">registrar pago</a>
         {# formulario de cierre de sesion #}
-        <form method="POST" action="/logout/">
-            {% csrf_token %}
-            <button type="submit">cerrar sesion</button>
-        </form>
+        {% if context != 'Login' %}
+            <form method="POST" action="/logout/">
+                {% csrf_token %}
+                <button type="submit">cerrar sesion</button>
+            </form>
+        {% endif %}
     </nav>
     {# zona de contenido #}
     {% block content %}
