@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from .models import Plan, Cliente
 from .forms import registerClient, loginForm
-from .enums import Headers
+from .enums import Headers, DatabaseColumns
 
 # Create your views here.
 #proteccion contra no autenticacion
@@ -13,8 +13,10 @@ def index(request):
     print(request.user.is_authenticated)
     return render(request,'indexClient.html',{
         "context":"Alumnos",
-        "headers": Headers.ALUMNOHEADERS,
-        "clients":Cliente.objects.all(),
+        "headers_pln": Headers.PLANHEADERS,
+        "plans": Plan.objects.all(),
+        "headers_alu": Headers.ALUMNOHEADERS,
+        "clients":Cliente.objects.all()
     })
 
 @login_required
@@ -27,13 +29,13 @@ def createAlumno(request):
         })
     else:
         #guardar datos en la base de datos
-        Cliente.objects.create(curp=request.POST['curp'],
-                               nombre=request.POST['nombre'],
-                               direccion=request.POST['direccion'],
-                               telefono=request.POST['telefono'],
-                               correo=request.POST['correo'],
-                               fecha_nac=request.POST['fecha_nac'],
-                               id_plan=Plan.objects.get(id_plan=request.POST['id_plan'])
+        Cliente.objects.create(curp=request.POST[DatabaseColumns.ALUMNOCOLUMNS[0]],
+                               nombre=request.POST[DatabaseColumns.ALUMNOCOLUMNS[1]],
+                               direccion=request.POST[DatabaseColumns.ALUMNOCOLUMNS[2]],
+                               telefono=request.POST[DatabaseColumns.ALUMNOCOLUMNS[3]],
+                               correo=request.POST[DatabaseColumns.ALUMNOCOLUMNS[4]],
+                               fecha_nac=request.POST[DatabaseColumns.ALUMNOCOLUMNS[5]],
+                               id_plan=Plan.objects.get(id_plan=request.POST[DatabaseColumns.ALUMNOCOLUMNS[6]])
                                )
         return redirect("/alumno/")
 @login_required

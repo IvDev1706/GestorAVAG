@@ -7,8 +7,12 @@
 
 body{
     background-color: #ccc;
+    height: 100vh;
     width: 100%;
     margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 90px 38px 1fr 100px;
 }
 
 .head {
@@ -33,7 +37,10 @@ body{
 .navigate > a {
     color: #fff;
     text-decoration: none;
+    padding: 3px;
     margin: 2px 5px;
+    border: 2px solid #fc0;
+    border-radius: 10px;
 }
 
 .navigate > a:hover{
@@ -44,7 +51,7 @@ body{
     color: #fff;
     text-align: center;
     background-color: #000;
-    border-top: 10px solid #f00;
+    border-top: 12px solid #f00;
     padding: 5px;
 }
 
@@ -52,5 +59,12 @@ body{
     background-color: #fff;
     border-radius: 5px;
     padding: 5px;
-    margin: 10px;
+}
+
+.logout__button {
+    background-color: #fc0;
+    padding: 5px;
+    margin: 2px;
+    border: 2px solid #000;
+    border-radius: 5px;
 }

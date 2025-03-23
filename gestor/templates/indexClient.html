@@ -3,15 +3,39 @@
 {%load static%}
 {%block styles%}
 <link rel="stylesheet" type="text/css" href="{% static 'css/table.css' %}"/>
+<link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}"/>
 {%endblock%}
 
 {% block content %}
     <div class="box-content">
-        <h2>Alumnos registrados</h2>
-        <table>
+        <h2 class="index__title">Informacion de planes</h2>
+        <hr>
+        <table class="index__table">
             <thead>
                 <tr>
-                {% for header in headers %}
+                {% for header in headers_pln %}
+                    <th>{{header}}</th>
+                {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for plan in plans %}
+                    <tr>
+                        <td>{{plan.id_plan}}</td>
+                        <td>{{plan.nombre_pl}}</td>
+                        <td>{{plan.mensualidad}}</td>
+                        <td>{{plan.inscripcion}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2 class="index__title">Alumnos registrados</h2>
+        <hr>
+        <table class="index__table">
+            <thead>
+                <tr>
+                {% for header in headers_alu %}
                     <th>{{header}}</th>
                 {% endfor %}
                 </tr>

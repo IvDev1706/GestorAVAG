@@ -1,0 +1,41 @@
+.box-content {
+    border: 3px solid #000;
+    width: 700px;
+    margin: 10px auto;
+}
+
+.create__title {
+    text-align: center;
+}
+
+hr {
+    width: 95%;
+}
+
+.create__form {
+    width: 95%;
+    margin: 0px auto;
+}
+
+div {
+    margin: 15px auto;
+    width: 60%;
+}
+
+div > input {
+    float: right;
+    border: 2px solid #000;
+}
+
+.create__form__cont{
+    width: 65px;
+    margin: 15px auto;
+}
+
+.create__form__button {
+    background-color: #f00;
+    color: #fff;
+    border: 2px solid #000;
+    border-radius: 5px;
+    padding: 5px 8px;
+}

@@ -1,13 +1,21 @@
 {% extends "baseTemplate.html" %}
 
+{% load static %}
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/create.css' %}"/>
+{% endblock %}
+
 {% block content %}
     <div class="box-content">
-        <h2>Datos del nuevo alumno</h2>
-        <form method="POST">
+        <h2 class="create__title">Datos del nuevo alumno</h2>
+        <hr>
+        <form method="POST" class="create__form">
             {# clave para formulario #}
             {% csrf_token %}
             {{form}}
-            <input type="submit" value="registrar"/>
+            <div class="create__form__cont">
+                <button class="create__form__button" type="submit">Registrar</button>
+            </div>
         </form>
     </div>
 {% endblock %}

@@ -1,14 +1,21 @@
 {% extends 'baseTemplate.html' %}
 
+{% load static %}
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"/>
+{% endblock %}
+
 {% block content %}
 <div class="box-content">
-    <h2>Acceso al panel de administrador</h2>
-    {{error}}
+    <h2 class="login__title">Acceso al panel de administrador</h2>
     <hr>
-    <form method="post" action=''>
+    <form method="post" action='' class="login__form">
         {% csrf_token %}
         {{form}}
-        <button type="submit">acceder</button>
+        <div class="login__form__error">{{error}}</div>
+        <div class="login__form__cont">
+            <button class="login__form__button" type="submit">Acceder</button>
+        </div>
     </form>
 </div>
 {% endblock %}
