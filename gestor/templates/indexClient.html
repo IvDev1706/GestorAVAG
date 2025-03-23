@@ -1,55 +1,49 @@
 {% extends "baseTemplate.html" %}
 
-{%load static%}
-{%block styles%}
-<link rel="stylesheet" type="text/css" href="{% static 'css/table.css' %}"/>
-<link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}"/>
-{%endblock%}
-
 {% block content %}
-    <div class="box-content">
-        <h2 class="index__title">Informacion de planes</h2>
+    <div class="w-75 bg-light border border-3 rounded border-dark my-1 mx-auto p-2">
+        <h2 class="text-center">Informacion de planes</h2>
         <hr>
-        <table class="index__table">
+        <table class="my-0 mx-auto">
             <thead>
                 <tr>
                 {% for header in headers_pln %}
-                    <th>{{header}}</th>
+                    <th class="border  border-dark bg-dark text-white text-center p-1">{{header}}</th>
                 {% endfor %}
                 </tr>
             </thead>
             <tbody>
                 {% for plan in plans %}
                     <tr>
-                        <td>{{plan.id_plan}}</td>
-                        <td>{{plan.nombre_pl}}</td>
-                        <td>{{plan.mensualidad}}</td>
-                        <td>{{plan.inscripcion}}</td>
+                        <td class="p-1 border border-dark">{{plan.id_plan}}</td>
+                        <td class="p-1 border border-dark">{{plan.nombre_pl}}</td>
+                        <td class="p-1 border border-dark">{{plan.mensualidad}}</td>
+                        <td class="p-1 border border-dark">{{plan.inscripcion}}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
 
-        <h2 class="index__title">Alumnos registrados</h2>
+        <h2 class="text-center">Alumnos registrados</h2>
         <hr>
-        <table class="index__table">
+        <table>
             <thead>
                 <tr>
                 {% for header in headers_alu %}
-                    <th>{{header}}</th>
+                    <th class="border border-dark bg-dark text-white text-center p-1">{{header}}</th>
                 {% endfor %}
                 </tr>
             </thead>
             <tbody>
                 {% for client in clients %}
                     <tr>
-                        <td>{{client.curp}}</td>
-                        <td>{{client.nombre}}</td>
-                        <td>{{client.direccion}}</td>
-                        <td>{{client.telefono}}</td>
-                        <td>{{client.correo}}</td>
-                        <td>{{client.fecha_nac}}</td>
-                        <td>{{client.id_plan}}</td>
+                        <td class="p-1 border border-dark">{{client.curp}}</td>
+                        <td class="p-1 border border-dark">{{client.nombre}}</td>
+                        <td class="p-1 border border-dark">{{client.direccion}}</td>
+                        <td class="p-1 border border-dark">{{client.telefono}}</td>
+                        <td class="p-1 border border-dark">{{client.correo}}</td>
+                        <td class="p-1 border border-dark">{{client.fecha_nac}}</td>
+                        <td class="p-1 border border-dark">{{client.id_plan}}</td>
                     </tr>
                 {% endfor %}
             </tbody>

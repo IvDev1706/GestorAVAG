@@ -71,3 +71,7 @@ def login_view(request):
         else:
             return render(request,'login.html',{'context':'Login','error':'Usuario o contraseña incorrectos','form':form})#renderizar plantilla
     return render(request,'login.html',{'context':'Login','error':'','form':form})#renderizar plantilla
+
+#pagina de logout
+def logout_view(request):
+    return render(request,'logout.html',{'context':'Logout'})

@@ -1,20 +1,17 @@
 {% extends "baseTemplate.html" %}
 
-{% load static %}
-{% block styles %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/create.css' %}"/>
-{% endblock %}
-
 {% block content %}
-    <div class="box-content">
-        <h2 class="create__title">Datos del nuevo alumno</h2>
+    <div class="bg-light w-75 border border-3 border-dark rounded p-2 my-1 mx-auto">
+        <h2 class="text-center">Datos del nuevo alumno</h2>
         <hr>
-        <form method="POST" class="create__form">
+        <form method="POST" class="w-75 my-0 mx-auto">
             {# clave para formulario #}
             {% csrf_token %}
-            {{form}}
-            <div class="create__form__cont">
-                <button class="create__form__button" type="submit">Registrar</button>
+            <div class="w-75 p-1 my-2 mx-auto">
+                {{form.as_p}}
+            </div>
+            <div style="width: 75px;" class="my-2 mx-auto">
+                <button class="btn btn-danger border border-2 border-dark rounded-pill text-white p-1" type="submit">Registrar</button>
             </div>
         </form>
     </div>
