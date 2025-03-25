@@ -11,5 +11,5 @@ urlpatterns = [
     path('alumno/create', createAlumno),
     path('alumno/update', updateAulmno),
     path('alumno/delet', deleteAlumno),
-    path('plan/<str:id_pl>', showPlan)#ruta con parametro
+    path('pago/register',createPago)
 ]

@@ -1,6 +1,7 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render , redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from .models import Plan, Cliente
 from .forms import registerClient, loginForm
 from .enums import Headers, DatabaseColumns
@@ -9,14 +10,18 @@ from .enums import Headers, DatabaseColumns
 #proteccion contra no autenticacion
 @login_required
 def index(request):
-    print(request.user)
-    print(request.user.is_authenticated)
+    #paginado de clientes
+    all_clients = Cliente.objects.all()
+    paginador = Paginator(all_clients, 10) # 10 clientes paginados
+    page_number = request.GET.get("page")
+    clientes = paginador.get_page(page_number)
+    
     return render(request,'indexClient.html',{
         "context":"Alumnos",
         "headers_pln": Headers.PLANHEADERS,
         "plans": Plan.objects.all(),
         "headers_alu": Headers.ALUMNOHEADERS,
-        "clients":Cliente.objects.all()
+        "clients": clientes
     })
 
 @login_required
@@ -38,6 +43,7 @@ def createAlumno(request):
                                id_plan=Plan.objects.get(id_plan=request.POST[DatabaseColumns.ALUMNOCOLUMNS[6]])
                                )
         return redirect("/alumno/")
+    
 @login_required
 def updateAulmno(request):
     return render(request,'updateClient.html',{'context':'Modificar alumno'})
@@ -47,16 +53,8 @@ def deleteAlumno(request):
     return render(request,'deleteClient.html',{'context':'Eliminar alumno'})
 
 @login_required
-def showPlan(request, id_pl):
-    #en caso de que no se encuentre el recurso
-    plan = get_object_or_404(Plan, id_plan=id_pl)
-    return render(request,'planInfo.html',{
-        'context':f'Info {plan.id_plan}',
-        'id_pl':plan.id_plan,
-        'nombre_pl':plan.nombre_pl,
-        'mensualidad':plan.mensualidad,
-        'inscripcion':plan.inscripcion
-    })#plantilla con parametros
+def createPago(request):
+    return render(request, 'pagoRegister.html',{'context':'Registrar pago'})
 
 #formulario de login
 def login_view(request):

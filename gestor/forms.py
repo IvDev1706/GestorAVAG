@@ -7,21 +7,27 @@ class registerClient(forms.Form):
     #campos del formulario
     curp = forms.CharField(label="CURP:",
                            max_length=18,
-                           widget=forms.TextInput(attrs={"style":"float: right;"}))
+                           widget=forms.TextInput(attrs={"style":"float: right;",
+                                                         "placeholder":"curp (18 digs)"}))
     nombre = forms.CharField(label="Nombre completo: ",
                              max_length=80,
-                             widget=forms.TextInput(attrs={"style":"float: right;"}))
+                             widget=forms.TextInput(attrs={"style":"float: right;",
+                                                           "placeholder":"john doe"}))
     direccion = forms.CharField(label="Direccion:",
                                 max_length=60,
-                                widget=forms.TextInput(attrs={"style":"float: right;"}))
+                                widget=forms.TextInput(attrs={"style":"float: right;",
+                                                              "placeholder": "Somewhere #100"}))
     telefono = forms.CharField(label="Telefono:",
                                max_length=12,
-                               widget=forms.TextInput(attrs={"style":"float: right;"}))
+                               widget=forms.TextInput(attrs={"style":"float: right;",
+                                                             "placeholder":"477#######"}))
     correo = forms.EmailField(label="Correo electronico:",
                               max_length=30,
-                              widget=forms.EmailInput(attrs={"style":"float: right;"}))
+                              widget=forms.EmailInput(attrs={"style":"float: right;",
+                                                             "placeholder":"jdoe@gmail.com"}))
     fecha_nac = forms.DateField(label="Fecha de nacimiento:",
-                                widget=forms.DateInput(attrs={"style":"float: right;"}))
+                                widget=forms.DateInput(attrs={"style":"float: right;",
+                                                              "placeholder":"YYYY-MM-DD"}))
     id_plan = forms.ModelChoiceField(queryset=Plan.objects.all(),
                                      widget=forms.Select(attrs={"style":"float: right;"}))#id de modelos
 
