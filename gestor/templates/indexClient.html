@@ -24,6 +24,14 @@
             </tbody>
         </table>
 
+        <div class="w-75 my-1 mx-auto p-1">
+            <form class="d-flex flex-row" action="" method="POST">
+                {% csrf_token %}
+                {{form.as_p}}
+                <button class="p-1 border border-2 border-dark rounded-pill text-white btn btn-danger">buscar</button>
+            </form>
+        </div>
+
         <h2 class="text-center">Alumnos registrados</h2>
         <hr>
         <table class="table table-striped table-hover my-1">

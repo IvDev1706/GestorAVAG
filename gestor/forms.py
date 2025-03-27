@@ -1,6 +1,4 @@
 from django import forms
-from django.contrib.auth import authenticate
-from .models import Plan
 
 #clase de formulario de registro
 class registerClient(forms.Form):
@@ -28,8 +26,11 @@ class registerClient(forms.Form):
     fecha_nac = forms.DateField(label="Fecha de nacimiento:",
                                 widget=forms.DateInput(attrs={"style":"float: right;",
                                                               "placeholder":"YYYY-MM-DD"}))
-    id_plan = forms.ModelChoiceField(queryset=Plan.objects.all(),
-                                     widget=forms.Select(attrs={"style":"float: right;"}))#id de modelos
+    curp_familiar = forms.CharField(label="CURP de familiar (opcional):",
+                                    max_length=18,
+                                    required=False,
+                                    widget=forms.TextInput(attrs={"style":"float: right;",
+                                                                  "placeholder":"curp (18 digs)"}))
 
 #clase de formulario de login
 class loginForm(forms.Form):
@@ -40,3 +41,10 @@ class loginForm(forms.Form):
     password = forms.CharField(label="Contraseña:",
                                max_length=20,
                                widget=forms.PasswordInput(attrs={"style":"float: right;"}))
+
+#clase de formulario de busqueda por nombre
+class searchClient(forms.Form):
+    #campos del formulario
+    nombre = forms.CharField(label="Nombre del alumno",
+                             max_length=80,
+                             widget=forms.TextInput(attrs={"placeholder":"nombre completo"}))
