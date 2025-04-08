@@ -4,4 +4,4 @@ call entorno_web\scripts\activate
 pip install django
 pip install mysqlclient
 echo entorno creado
-pause
+pause 
