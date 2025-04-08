@@ -49,9 +49,10 @@ def createAlumno(request):
         })
     else:
         try:
-            #validamos que exista el familiar
-            familiar = Cliente.objects.get(curp=request.POST["curp_familiar"])
-            if familiar:
+            try:
+                #validamos que exista el familiar
+                familiar = Cliente.objects.get(curp=request.POST["curp_familiar"])
+                
                 #guardar datos en la base de datos
                 Cliente.objects.create(curp=request.POST[DatabaseColumns.ALUMNOCOLUMNS[0]],
                                     nombre=request.POST[DatabaseColumns.ALUMNOCOLUMNS[1]],
@@ -61,19 +62,21 @@ def createAlumno(request):
                                     fecha_nac=request.POST[DatabaseColumns.ALUMNOCOLUMNS[5]],
                                     id_plan=Plan.objects.get(id_plan="P-F")
                                     )
-            else:
-                #guardar datos en la base de datos
+            except Cliente.DoesNotExist as e:
+                #cliente con plan regular
                 Cliente.objects.create(curp=request.POST[DatabaseColumns.ALUMNOCOLUMNS[0]],
-                                    nombre=request.POST[DatabaseColumns.ALUMNOCOLUMNS[1]],
-                                    direccion=request.POST[DatabaseColumns.ALUMNOCOLUMNS[2]],
-                                    telefono=request.POST[DatabaseColumns.ALUMNOCOLUMNS[3]],
-                                    correo=request.POST[DatabaseColumns.ALUMNOCOLUMNS[4]],
-                                    fecha_nac=request.POST[DatabaseColumns.ALUMNOCOLUMNS[5]],
-                                    id_plan=Plan.objects.get(id_plan="P-R")
-                                    )
+                                        nombre=request.POST[DatabaseColumns.ALUMNOCOLUMNS[1]],
+                                        direccion=request.POST[DatabaseColumns.ALUMNOCOLUMNS[2]],
+                                        telefono=request.POST[DatabaseColumns.ALUMNOCOLUMNS[3]],
+                                        correo=request.POST[DatabaseColumns.ALUMNOCOLUMNS[4]],
+                                        fecha_nac=request.POST[DatabaseColumns.ALUMNOCOLUMNS[5]],
+                                        id_plan=Plan.objects.get(id_plan="P-R")
+                                        )
+                return redirect("/alumno/")
             return redirect("/alumno/")
         #validacion de registro duplicado
         except IntegrityError as e:
+            # cliente duplicado
             return render(request,'createClient.html',{
                 "context":"Registrar alumno",
                 "form":registerClient(),

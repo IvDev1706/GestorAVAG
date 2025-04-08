@@ -25,7 +25,7 @@
         </table>
 
         <div class="w-75 my-1 mx-auto p-1">
-            <form class="d-flex flex-row" action="" method="POST">
+            <form class="w-100 d-flex flex-row justify-content-around" action="" method="POST">
                 {% csrf_token %}
                 {{form.as_p}}
                 <button class="p-1 border border-2 border-dark rounded-pill text-white btn btn-danger">buscar</button>
