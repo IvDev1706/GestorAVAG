@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor AVAG - {{context}}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.min.css' %}"/>
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}" defer></script>
+</head>
+<body class="w-100 vh-100 d-flex flex-column">
+    <header class="bg-dark w-100 p-2">
+        <h1 class="text-white fst-italic">Gestor de pagos AVAG - Alumno</h1>
+    </header>
+    <nav class="navbar navbar-danger bg-danger navbar-expand-lg">
+        <div class="d-flex justify-content-around w-100">
+            <a class="p-1 link-light text-decoration-none border border-2 border-warning rounded-pill" href="/alumno/">Mi informacion</a>
+            <a class="p-1 link-light text-decoration-none border border-2 border-warning rounded-pill" href="/alumno/history">Historial de pagos</a>
+            <a class="p-1 link-light text-decoration-none border border-2 border-warning rounded-pill" href="/alumno/payment">Pagar mensualidad</a>
+            {# formulario de cierre de sesion #}
+            {% if context != 'Login' %}
+                <form method="POST" action="/logout/">
+                    {% csrf_token %}
+                    <button class="btn btn-warning border border-2 border-dark rounded-pill p-1"type="submit">Cerrar sesion</button>
+                </form>
+            {% endif %}
+        </div>
+    </nav>
+    <main style="background-color: #ccc;" class="w-100 p-2 flex-grow-1 flex-shrink-0">
+    {# zona de contenido #}
+    {% block content %}
+    {% endblock %}
+    </main>
+
+    <footer class="bg-dark w-100 border-top border-5 border-danger p-2">
+        <h3 class="text-white text-center">Equipo 1 IGS Copyright@ 2025</h3>
+        <h4 class="text-white text-center">Derechos de logo y nombre a Team Tigers AVAG</h4>
+    </footer>
+</body>
+</html>

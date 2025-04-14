@@ -1,0 +1,18 @@
+{% extends 'baseTemplate2.html' %}
+
+{% block content %}
+<div class="bg-light p-2 my-1 mx-auto border border-3 border-dark rounded w-50 h-75">
+    <h2 class="text-center">Acceso al panel de alumno</h2>
+    <hr>
+    <form method="post" action='' class="my-0 mx-auto w-75">
+        {% csrf_token %}
+        <div class="w-75 p-1 my-2 mx-auto">
+            {{form.as_p}}
+        </div>
+        <div class="w-100 text-danger text-center">{{error}}</div>
+        <div style="width: 70px;" class="my-2 mx-auto">
+            <button class="btn btn-danger text-white border border-2 border-dark rounded-pill p-1" type="submit">Acceder</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
