@@ -71,8 +71,8 @@ def createAlumno(request):
                                         fecha_nac=request.POST[DatabaseColumns.ALUMNOCOLUMNS[5]],
                                         id_plan=Plan.objects.get(id_plan="P-R")
                                         )
-                return redirect("/alumno/")
-            return redirect("/alumno/")
+                return redirect("/admon/alumno/")
+            return redirect("/admon/alumno/")
         #validacion de registro duplicado
         except IntegrityError as e:
             # cliente duplicado
@@ -103,7 +103,7 @@ def login_view(request):
         user = authenticate(username=request.POST['user'],password=request.POST['password'])
         if user:
             login(request, user)
-            return redirect("/alumno/")
+            return redirect("/admon/alumno/")
         else:
             return render(request,'login.html',{'context':'Login','error':'Usuario o contraseña incorrectos','form':form})#renderizar plantilla
     return render(request,'login.html',{'context':'Login','error':'','form':form})#renderizar plantilla
