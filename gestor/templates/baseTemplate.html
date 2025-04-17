@@ -22,7 +22,7 @@
             <a class="p-1 link-light text-decoration-none border border-2 border-warning rounded-pill" href="/admon/pago/register">Registrar pago</a>
             {# formulario de cierre de sesion #}
             {% if context != 'Login' %}
-                <form method="POST" action="/logout/">
+                <form method="POST" action="/admon/logout/">
                     {% csrf_token %}
                     <button class="btn btn-warning border border-2 border-dark rounded-pill p-1"type="submit">Cerrar sesion</button>
                 </form>

@@ -4,6 +4,8 @@ class Headers:
     ALUMNOHEADERS = ["Curp","Nombre completo","Direccion","Telefono","Correo","Fecha de nacimiento","Tipo de plan"]
     #ecabezados de plan
     PLANHEADERS = ["Id plan","Nombre","Mensualidad (MXN)","Inscripcion (MXN)"]
+    #encabezados de pago
+    PAGOHEADERS = ["Id de pago","Monto","Fecha de pago","Forma de pago","Retraso"]
 
 class DatabaseColumns:
     #columnas de alumno

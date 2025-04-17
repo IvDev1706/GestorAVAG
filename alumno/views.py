@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .forms import LoginForm
-from gestor.models import Cliente
+from gestor.models import Cliente, Pago
+from gestor.enums import DatabaseColumns, Headers
 
 # Create your views here.
 def login_view(request):
@@ -42,12 +43,24 @@ def cliente_index(request):
     return render(request, 'indexAlu.html', {'context':'Mi informacion',
                                              'cliente':Cliente.objects.get(curp=curp)
                                              })
+#ruta de historial de pagos
+def cliente_history(request):
+    #proteccion de ruta
+    curp = request.session.get('cliente_curp')
+    
+    if not curp:
+        return redirect('/')#redireccion al login
+    
+    #obtencion de los pagos (no mas de 12 meses atras)
+    all_pays = Pago.objects.all().order_by(DatabaseColumns.PAGOCOLUMNS[2])[:12]
+    
+    return render(request,'historyAlu.html',{"context":"Historial de pagos",
+                                             "headers":Headers.PAGOHEADERS,
+                                             "pays":all_pays})
+
 #ruta de cierre de sesion
 def logout_view(request):
     #eliminar la curp guardada
-    try:
-        del request.session['cliente_curp']
-    except KeyError:
-        pass
+    request.session.flush()
     
-    return render(request, 'logoutAlu.html', {'context':'Logout'})
+    return render(request, 'logoutAlu.html', {'context':'Logout'})  
