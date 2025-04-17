@@ -52,7 +52,7 @@ def cliente_history(request):
         return redirect('/')#redireccion al login
     
     #obtencion de los pagos (no mas de 12 meses atras)
-    all_pays = Pago.objects.all().order_by(DatabaseColumns.PAGOCOLUMNS[2])[:12]
+    all_pays = Pago.objects.filter(curp_id=request.session.get('cliente_curp')).order_by(DatabaseColumns.PAGOCOLUMNS[2])[:12]
     
     return render(request,'historyAlu.html',{"context":"Historial de pagos",
                                              "headers":Headers.PAGOHEADERS,
