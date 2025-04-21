@@ -11,5 +11,6 @@ urlpatterns = [
     path('alumno/create', createAlumno),
     path('alumno/update', updateAulmno),
     path('alumno/delet', deleteAlumno),
-    path('pago/register',createPago)
+    path('pago/register',createPago),
+    path('pago/history/<str:curp>/', historyPago)
 ]

@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.utils import IntegrityError
-from .models import Plan, Cliente
+from .models import Plan, Cliente, Pago
 from .forms import registerClient, loginForm, searchClient
 from .enums import Headers, DatabaseColumns
 
@@ -93,6 +93,24 @@ def deleteAlumno(request):
 @login_required
 def createPago(request):
     return render(request, 'pagoRegister.html',{'context':'Registrar pago'})
+
+@login_required
+def historyPago(request, curp):
+    #obtener los pagos del cliente
+    all_pays = Pago.objects.filter(curp_id=curp).order_by(DatabaseColumns.PAGOCOLUMNS[2])
+    paginador = Paginator(all_pays, 10)
+    page = request.GET.get("page")
+    if page:
+        pays = paginador.page(page)
+    else:
+        pays = paginador.page(1)
+    
+    client = Cliente.objects.get(curp=curp).nombre
+    return render(request,'history.html',{'context':'Historial de pagos',
+                                          'client_curp':curp,
+                                          'client_name':client,
+                                          'headers':Headers.PAGOHEADERS,
+                                          'pays':pays})
 
 #formulario de login
 def login_view(request):

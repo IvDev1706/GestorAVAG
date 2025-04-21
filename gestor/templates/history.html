@@ -1,0 +1,28 @@
+{% extends "baseTemplate.html" %}
+
+{% block content %}
+    <div class="w-75 bg-light p-2 my-1 mx-auto border border-3 border-dark rounded">
+        <h2 class="text-center">Historial de pagos de {{ client_name }} ({{ client_curp }})</h2>
+        <hr>
+        <table class="my-0 mx-auto table table-striped table-hover w-75 my-1">
+            <thead>
+                <tr>
+                {% for header in headers %}
+                    <th class="border  border-dark bg-dark text-white text-center p-1">{{header}}</th>
+                {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for pay in pays %}
+                    <tr>
+                        <td class="p-1 border border-dark">{{pay.id_pago}}</td>
+                        <td class="p-1 border border-dark">{{pay.monto}}</td>
+                        <td class="p-1 border border-dark">{{pay.fecha_pago}}</td>
+                        <td class="p-1 border border-dark">{{pay.tipo}}</td>
+                        <td class="p-1 border border-dark">{{pay.retrasado}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock content %}

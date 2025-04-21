@@ -45,7 +45,9 @@
             <tbody>
                 {% for client in clients %}
                     <tr>
-                        <td class="p-1 border border-dark">{{client.curp}}</td>
+                        <td class="p-1 border border-dark">
+                            <a href="/admon/pago/history/{{ client.curp }}" class="link-primary">{{client.curp}}</a>
+                        </td>
                         <td class="p-1 border border-dark">{{client.nombre}}</td>
                         <td class="p-1 border border-dark">{{client.direccion}}</td>
                         <td class="p-1 border border-dark">{{client.telefono}}</td>
