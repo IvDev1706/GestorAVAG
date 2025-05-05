@@ -139,3 +139,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #ruta de login y logout (redireccion)
 LOGIN_URL = '/admon/'
 LOGOUT_REDIRECT_URL = '/admon/logout/view'
+
+#claves de stripe (testing)
+STRIPE_PUBLIC_KEY = ""
+STRIPE_SECRET_KEY = ""
+STRIPE_WEBHOOK_SECRET = ""

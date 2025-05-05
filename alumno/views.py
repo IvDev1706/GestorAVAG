@@ -1,4 +1,8 @@
 from django.shortcuts import render, redirect
+from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+import stripe.error
 from .forms import LoginForm
 from gestor.models import Cliente, Pago
 from gestor.enums import DatabaseColumns, Headers
@@ -56,8 +60,67 @@ def cliente_history(request):
     
     return render(request,'historyAlu.html',{"context":"Historial de pagos",
                                              "headers":Headers.PAGOHEADERS,
-                                             "pays":all_pays})
+                                             "pays":all_pays,
+                                             'STRIPE_PUBLIC_KEY': settings.STRIPE_PUBLIC_KEY})
 
+#ruta de pago de membresia
+def cliente_payment(request):
+    #proteccion de ruta
+    curp = request.session.get('cliente_curp')
+    
+    if not curp:
+        return redirect('/')
+    
+    #renderizamos la pagina
+    return render(request,'paymentView.html',{"context":"Pago de membresia",
+                                              "cliente":Cliente.objects.get(curp=curp),
+                                              'STRIPE_PUBLIC_KEY': settings.STRIPE_PUBLIC_KEY
+                                              })
+
+#ruta de checkout session
+@csrf_exempt
+def checkout_session(request, *args, **kwargs):
+    if request.method == "POST":
+        #creamos la secion
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],#metodo de pago
+            line_items=[{
+                'price_data':{
+                    'currency':'mxn',
+                    "product_data":{
+                        'name':'Pago de membresia mensual',
+                    },
+                    'unit_amount':40000,#cantidad en centavos
+                },
+                'quantity':1
+            }],
+            mode='payment',
+            success_url="http://localhost:8000/alumno/history/"
+        )
+        
+        return JsonResponse({'id':session.id})
+    
+#ruta de webhook para registrar pagos
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    event = None
+    
+    #creacion d evento
+    try:
+        event = stripe.Webhook.construct_event(payload, sig_header, settings.STRIPE_WEBHOOK_SECRET)
+    except ValueError as e:
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVErificationError as e:
+        return HttpResponse(status=400)
+    
+    #captura del evento
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        print(session)
+    
+    return HttpResponse(status=200)
 #ruta de cierre de sesion
 def logout_view(request):
     #eliminar la curp guardada
