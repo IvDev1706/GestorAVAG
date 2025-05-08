@@ -2,10 +2,13 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+import stripe
 import stripe.error
 from .forms import LoginForm
 from gestor.models import Cliente, Pago
 from gestor.enums import DatabaseColumns, Headers
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 # Create your views here.
 def login_view(request):

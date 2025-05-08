@@ -1,18 +1,24 @@
 {% extends "baseTemplate2.html" %}
 
 {% block content %}
-    <div class="w-75 p-2 bg-light my-1 mx-auto border border-3 border-dark rounded">
-        <h2 class="text-center">Pago de mensualidad</h2>
+    <div class="bg-light w-75 p-2 my-1 mx-auto border border-3 border-dark rounded">
+        <h2 class="text-center">
+            Pago de membresia
+        </h2>
         <hr>
-        <h3 class="text-center">Datos del alumno</h3>
-        <b>Nombre:</b> {{ cliente.nombre }}<br>
-        <b>CURP:</b> {{ cliente.curp }}<br>
-        <b>Correo:</b> {{ cliente.correo }}<br>
-        <b>Tipo de plan:</b> {{ cliente.id_plan }}<br>
-        <br>
-        <h3 class="text-center">Datos del pago</h3>
-        <b>Institucion:</b> Team Tigers AVAG<br>
-        <b>Concepto:</b> Pago de membresia mensual<br>
-        <b>Monto:</b> {{ cliente.id_plan.mensualidad }}<br>
+        <div class="w-75 mx-auto p-1">
+            <h4>Datos del cliente</h4>
+            <b>Nombre: </b> {{ cliente.nombre }}<br>
+            <b>Curp: </b> {{ cliente.curp }}<br>
+            <b>Correo: </b> {{ cliente.correo }}<br>
+            <b>Tipo de plan: </b> {{ cliente.id_plan.nombre_pl }}<br>
+            <br>
+            <h4>Datos del pago</h4>
+            <b>Institucion: </b> Team Tigers AVAG<br>
+            <b>Concepto:</b> Pago de membresia mensual<br>
+            <b>Monto correspondiente:</b> {{ cliente.id_plan.mensualidad }}<br>
+            <br>
+            <button id="checkout-button">Pagar</button>
+        </div>
     </div>
 {% endblock content %}
