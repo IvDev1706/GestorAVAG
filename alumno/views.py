@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+from datetime import datetime
+from decimal import Decimal
+import json
 import stripe
 import stripe.error
 from .forms import LoginForm
@@ -48,7 +51,8 @@ def cliente_index(request):
     
     #vista del index
     return render(request, 'indexAlu.html', {'context':'Mi informacion',
-                                             'cliente':Cliente.objects.get(curp=curp)
+                                             'cliente':Cliente.objects.get(curp=curp),
+                                             'STRIPE_PUBLIC_KEY': settings.STRIPE_PUBLIC_KEY
                                              })
 #ruta de historial de pagos
 def cliente_history(request):
@@ -74,9 +78,18 @@ def cliente_payment(request):
     if not curp:
         return redirect('/')
     
+    cliente = Cliente.objects.get(curp=curp)
+    
+    #validacion de atraso
+    fechaA = datetime.now()
+    fechaT = datetime(fechaA.year, fechaA.month, 5)
+    monto =  (cliente.id_plan.mensualidad + Decimal("50.0")) if fechaA > fechaT else cliente.id_plan.mensualidad#la fecha pasa del 5 del mes
+    
     #renderizamos la pagina
     return render(request,'paymentView.html',{"context":"Pago de membresia",
-                                              "cliente":Cliente.objects.get(curp=curp),
+                                              "cliente":cliente,
+                                              "monto":monto,
+                                              "fecha":fechaA.strftime("%Y-%m-%d"),
                                               'STRIPE_PUBLIC_KEY': settings.STRIPE_PUBLIC_KEY
                                               })
 
@@ -84,6 +97,11 @@ def cliente_payment(request):
 @csrf_exempt
 def checkout_session(request, *args, **kwargs):
     if request.method == "POST":
+        #obtener los datos mandados desde front
+        data = json.loads(request.body)
+        amount_pesos = float(data.get("amount", 0))
+        amount_centavos = int(amount_pesos * 100)  # Stripe usa centavos
+        
         #creamos la secion
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],#metodo de pago
@@ -93,7 +111,7 @@ def checkout_session(request, *args, **kwargs):
                     "product_data":{
                         'name':'Pago de membresia mensual',
                     },
-                    'unit_amount':40000,#cantidad en centavos
+                    'unit_amount':amount_centavos,#cantidad en centavos
                 },
                 'quantity':1
             }],

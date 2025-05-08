@@ -16,7 +16,8 @@
             <h4>Datos del pago</h4>
             <b>Institucion: </b> Team Tigers AVAG<br>
             <b>Concepto:</b> Pago de membresia mensual<br>
-            <b>Monto correspondiente:</b> {{ cliente.id_plan.mensualidad }}<br>
+            <b>Monto correspondiente:</b> <span id="monto">{{ monto }}</span><br>
+            <b>Fecha:</b> {{ fecha }}
             <br>
             <button id="checkout-button">Pagar</button>
         </div>
