@@ -1,0 +1,17 @@
+{% extends "baseTemplate2.html" %}
+
+{% block content %}
+    <div class="w-75 p-2 bg-light border border-3 border-dark rounded my-2 mx-auto">
+        <h2 class="text-center">Pago no realizado</h2>
+        <div class="w-75 my-2 mx-auto">
+            <p class="text-center">
+                La transaccion de pago mensual ha sido candelada o abortada,
+                si el problema persiste realize su pago de manera manual en la
+                institucion.
+            </p>
+        </div>
+        <div style="width: 130px;" class="my-2 mx-auto">
+            <a class="link-light p-1 border border-2 border-dark bg-danger rounded-pill text-decoration-none" href="/alumno/miinfo/">Volver a inicio</a>
+        </div>
+    </div>
+{% endblock content %}

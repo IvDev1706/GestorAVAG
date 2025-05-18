@@ -15,6 +15,13 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 # Create your views here.
 def login_view(request):
+    #proteccion de ruta
+    curp = request.session.get('cliente_curp')
+    
+    #caso de que no se cierra la sesion como es debido
+    if curp:
+        request.session.flush()#eliminar session abierta
+    
     error = ""
     
     #la ruta en post
@@ -97,6 +104,7 @@ def cliente_payment(request):
 @csrf_exempt
 def checkout_session(request, *args, **kwargs):
     if request.method == "POST":
+        cliente = Cliente.objects.get(curp=request.session.get('cliente_curp'))
         #obtener los datos mandados desde front
         data = json.loads(request.body)
         amount_pesos = float(data.get("amount", 0))
@@ -115,8 +123,12 @@ def checkout_session(request, *args, **kwargs):
                 },
                 'quantity':1
             }],
+            metadata={
+                "cliente_id":cliente.curp
+            },
             mode='payment',
-            success_url="http://localhost:8000/alumno/history/"
+            success_url="http://localhost:8000/alumno/payment/success",
+            cancel_url="http://localhost:8000/alumno/payment/abort"
         )
         
         return JsonResponse({'id':session.id})
@@ -139,9 +151,35 @@ def stripe_webhook(request):
     #captura del evento
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        print(session)
+        fechaA = datetime.now()
+        fechaT = datetime(fechaA.year, fechaA.month, 5)
+        retrasado = True if fechaA > fechaT else False
+        cliente = Cliente.objects.get(curp=session['metadata'].get('cliente_id'))
+        monto = (cliente.id_plan.mensualidad + Decimal("50.0")) if retrasado else cliente.id_plan.mensualidad
+        
+        #crear el objeto pago
+        Pago.objects.create(monto=monto, fecha_pago=fechaA, tipo="Tarjeta", retrasado=retrasado, curp = cliente)
+        
     
     return HttpResponse(status=200)
+def succes_pay(request):
+    #proteccion de ruta
+    curp = request.session.get('cliente_curp')
+    
+    if not curp:
+        return redirect('/')
+    
+    return render(request,'successPayView.html',{'content':'Pago exitoso'})
+
+def aborted_pay(request):
+    #proteccion de ruta
+    curp = request.session.get('cliente_curp')
+    
+    if not curp:
+        return redirect('/')
+    
+    return render(request,'abortedPayView.html',{'content':'Pago no realizado'})
+
 #ruta de cierre de sesion
 def logout_view(request):
     #eliminar la curp guardada
