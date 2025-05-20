@@ -36,5 +36,19 @@
         <h3 class="text-white text-center">Equipo 1 IGS Copyright@ 2025</h3>
         <h4 class="text-white text-center">Derechos de logo y nombre a Team Tigers AVAG</h4>
     </footer>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const stripe = Stripe("{{ STRIPE_PUBLIC_KEY }}");
+        monto = document.getElementById("monto").innerHTML;
+        document.getElementById("checkout-button").addEventListener("click", function () {
+            fetch("/alumno/checkout/", { 
+                method: "POST",
+                headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({amount:monto})
+            })
+                .then(res => res.json())
+                .then(data => stripe.redirectToCheckout({ sessionId: data.id }));
+        });
+    </script>
 </body>
 </html>

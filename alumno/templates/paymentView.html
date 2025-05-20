@@ -1,0 +1,30 @@
+{% extends "baseTemplate2.html" %}
+
+{% block content %}
+    <div class="bg-light w-75 p-2 my-1 mx-auto border border-3 border-dark rounded">
+        <h2 class="text-center">
+            Pago de membresia
+        </h2>
+        <hr>
+        <div class="w-75 mx-auto p-1">
+            <h4>Datos del cliente</h4>
+            <b>Nombre: </b> {{ cliente.nombre }}<br>
+            <b>Curp: </b> {{ cliente.curp }}<br>
+            <b>Correo: </b> {{ cliente.correo }}<br>
+            <b>Tipo de plan: </b> {{ cliente.id_plan.nombre_pl }}<br>
+            <br>
+            <h4>Datos del pago</h4>
+            <b>Institucion: </b> Team Tigers AVAG<br>
+            <b>Concepto:</b> Pago de membresia mensual<br>
+            <b>Monto correspondiente:</b> <span id="monto">{{ monto }}</span><br>
+            <b>Fecha:</b> {{ fecha }}<br>
+            <b>Estatus: </b> {% if paid %} pagado  {% else %} sin pagar {% endif %}</br>
+            <br>
+            <div class="w-100 p-1 d-flex justify-content-around">
+                <button {% if paid %} disabled {% endif %}  class="btn btn-primary border border-2 border-dark rounded-pill p-2" id="checkout-button">Pagar con tarjeta</button>
+                <button {% if paid %} disabled {% endif %} class="btn btn-primary border border-2 border-dark rounded-pill p-2">Pagar con paypal</button>
+                <button {% if paid %} disabled {% endif %} class="btn btn-primary border border-2 border-dark rounded-pill p-2">Pago por transferencia</button>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

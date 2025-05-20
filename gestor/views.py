@@ -52,8 +52,11 @@ def createAlumno(request):
     else:
         try:
             try:
+                familiar = Cliente.objects.filter(curp=request.POST["curp_familiar"])
+                if not familiar.exists():
+                    raise Cliente.DoesNotExist
                 #validamos que exista el familiar
-                Cliente.objects.filter(curp=request.POST["curp_familiar"]).update(id_plan=Plan.objects.get(id_plan="P-F"))
+                familiar.update(id_plan=Plan.objects.get(id_plan="P-F"))
                 #guardar datos en la base de datos
                 Cliente.objects.create(curp=request.POST[DatabaseColumns.ALUMNOCOLUMNS[0]],
                                     nombre=request.POST[DatabaseColumns.ALUMNOCOLUMNS[1]],
@@ -64,6 +67,7 @@ def createAlumno(request):
                                     id_plan=Plan.objects.get(id_plan="P-F")
                                     )
             except Cliente.DoesNotExist as e:
+                print(e)
                 #cliente con plan regular
                 Cliente.objects.create(curp=request.POST[DatabaseColumns.ALUMNOCOLUMNS[0]],
                                         nombre=request.POST[DatabaseColumns.ALUMNOCOLUMNS[1]],

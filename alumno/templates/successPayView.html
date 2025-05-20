@@ -1,0 +1,16 @@
+{% extends "baseTemplate2.html" %}
+
+{% block content %}
+    <div class="w-75 p-2 bg-light border border-3 border-dark rounded my-2 mx-auto">
+        <h2 class="text-center">Pago realizado con exito</h2>
+        <div class="w-75 my-2 mx-auto">
+            <p class="text-center">
+                El pago de su membresia de este mes ha sido realizado con exito,
+                puede consultarlo en el apartado de historial.
+            </p>
+        </div>
+        <div style="width: 130px;" class="my-2 mx-auto">
+            <a class="link-light p-1 border border-2 border-dark bg-danger rounded-pill text-decoration-none" href="/alumno/history/">Ver historial</a>
+        </div>
+    </div>
+{% endblock content %}
