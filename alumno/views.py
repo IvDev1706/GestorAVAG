@@ -70,7 +70,7 @@ def cliente_history(request):
         return redirect('/')#redireccion al login
     
     #obtencion de los pagos (no mas de 12 meses atras)
-    all_pays = Pago.objects.filter(curp_id=request.session.get('cliente_curp')).order_by(DatabaseColumns.PAGOCOLUMNS[2])[:12]
+    all_pays = Pago.objects.filter(curp_id=request.session.get('cliente_curp')).order_by(f"-{DatabaseColumns.PAGOCOLUMNS[2]}")[:12]
     
     return render(request,'historyAlu.html',{"context":"Historial de pagos",
                                              "headers":Headers.PAGOHEADERS,
@@ -92,11 +92,22 @@ def cliente_payment(request):
     fechaT = datetime(fechaA.year, fechaA.month, 5)
     monto =  (cliente.id_plan.mensualidad + Decimal("50.0")) if fechaA > fechaT else cliente.id_plan.mensualidad#la fecha pasa del 5 del mes
     
+    #pago mas reciente
+    ultimo_pago = Pago.objects.filter(curp_id=cliente.curp).order_by(f"-{DatabaseColumns.PAGOCOLUMNS[2]}").first()
+    pagado = False
+    
+    #si existe
+    if ultimo_pago:
+        #es del mes actual
+        if ultimo_pago.fecha_pago.month == fechaA.month:
+            pagado = True#ya pago este mes
+    
     #renderizamos la pagina
     return render(request,'paymentView.html',{"context":"Pago de membresia",
                                               "cliente":cliente,
                                               "monto":monto,
                                               "fecha":fechaA.strftime("%Y-%m-%d"),
+                                              "paid":pagado,
                                               'STRIPE_PUBLIC_KEY': settings.STRIPE_PUBLIC_KEY
                                               })
 
@@ -169,7 +180,7 @@ def succes_pay(request):
     if not curp:
         return redirect('/')
     
-    return render(request,'successPayView.html',{'content':'Pago exitoso'})
+    return render(request,'successPayView.html',{'context':'Pago exitoso'})
 
 def aborted_pay(request):
     #proteccion de ruta
@@ -178,7 +189,7 @@ def aborted_pay(request):
     if not curp:
         return redirect('/')
     
-    return render(request,'abortedPayView.html',{'content':'Pago no realizado'})
+    return render(request,'abortedPayView.html',{'context':'Pago no realizado'})
 
 #ruta de cierre de sesion
 def logout_view(request):
