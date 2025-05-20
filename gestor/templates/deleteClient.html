@@ -2,7 +2,42 @@
 
 {% block content %}
     <div class="w-75 bg-light border border-3 rounded border-dark my-1 mx-auto p-2">
-        <h2>Eliminar alumno</h2>
+        <h2 class="text-center">Eliminar alumno</h2>
         <hr>
+        
+        <form method="POST" action="{% url 'buscar_alumno_eliminar' %}" class="w-full max-w-sm">
+
+            {% csrf_token %}
+            <div class="w-75 p-1 my-2 mx-auto">
+                <label for="curp_busqueda">Inserte un CURP para buscar al alumno:</label>
+                <div class="d-flex">
+                    <input type="text" name="curp_busqueda" id="curp_busqueda" class="form-control" placeholder="CURP (18 digs)">
+                    <button type="submit" class="btn btn-danger border border-2 border-dark rounded-pill ms-2">Buscar</button>
+                </div>
+            </div>
+            <div class="w-100 text-danger text-center">{{ error }}</div>
+        </form>
+        
+        {% if alumno %}
+            <div class="w-75 p-3 my-3 mx-auto border border-2 border-dark rounded bg-white">
+                <h4>Alumno encontrado:</h4>
+                <p><strong>CURP:</strong> {{ alumno.curp }}</p>
+                <p><strong>Nombre:</strong> {{ alumno.nombre }}</p>
+                <p><strong>Dirección:</strong> {{ alumno.direccion }}</p>
+                <p><strong>Teléfono:</strong> {{ alumno.telefono }}</p>
+                <p><strong>Correo:</strong> {{ alumno.correo }}</p>
+                <p><strong>Fecha de nacimiento:</strong> {{ alumno.fecha_nac }}</p>
+                <p><strong>Plan:</strong> {{ alumno.id_plan.nombre_pl }}</p>
+                
+                <form method="POST" action="{% url 'eliminar_alumno' alumno.curp %}" class="mt-3">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-danger border border-2 border-dark rounded-pill" onclick="return confirm('¿Está seguro de eliminar este alumno? Esta acción no se puede deshacer.')">
+                            Eliminar alumno
+                        </button>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

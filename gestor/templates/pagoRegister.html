@@ -2,7 +2,41 @@
 
 {% block content %}
     <div class="w-75 bg-light border border-3 rounded border-dark my-1 mx-auto p-2">
-        <h2>Registrar pago en efectivo</h2>
+        <h2 class="text-center">Registrar pago en efectivo</h2>
         <hr>
+        
+        {% if not alumno %}
+            <form method="POST" action="{% url 'buscar_alumno_pago' %}" class="w-75 my-0 mx-auto">
+                {% csrf_token %}
+                <div class="w-75 p-1 my-2 mx-auto">
+                    <label for="curp_busqueda">Inserte un CURP para buscar al alumno:</label>
+                    <div class="d-flex">
+                        <input type="text" name="curp_busqueda" id="curp_busqueda" class="form-control" placeholder="CURP (18 digs)">
+                        <button type="submit" class="btn btn-danger border border-2 border-dark rounded-pill ms-2">Buscar</button>
+                    </div>
+                </div>
+                <div class="w-100 text-danger text-center">{{ error }}</div>
+            </form>
+        {% else %}
+            <div class="w-75 p-3 my-3 mx-auto border border-2 border-dark rounded bg-white">
+                <h4>Alumno encontrado:</h4>
+                <p><strong>CURP:</strong> {{ alumno.curp }}</p>
+                <p><strong>Nombre:</strong> {{ alumno.nombre }}</p>
+                <p><strong>Plan:</strong> {{ alumno.id_plan.nombre_pl }}</p>
+                <p><strong>Mensualidad:</strong> ${{ alumno.id_plan.mensualidad }} MXN</p>
+            </div>
+            
+            <form method="POST" action="{% url 'registrar_pago' alumno.curp %}" class="w-75 my-3 mx-auto">
+                {% csrf_token %}
+                <div class="w-75 p-1 my-2 mx-auto">
+                    {{ form.as_p }}
+                </div>
+                <p class="text-muted text-center">*este campo solo se usa para mostrar el monto en efectivo que se debería recibir de acuerdo al plan que tenga el alumno*</p>
+                <div class="w-100 text-danger text-center">{{ error }}</div>
+                <div style="width: 120px;" class="my-2 mx-auto">
+                    <button class="btn btn-danger border border-2 border-dark rounded-pill text-white p-1" type="submit">Registrar pago</button>
+                </div>
+            </form>
+        {% endif %}
     </div>
-{% endblock content %}
+{% endblock %}

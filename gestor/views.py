@@ -6,6 +6,8 @@ from django.db.utils import IntegrityError
 from .models import Plan, Cliente, Pago
 from .forms import registerClient, loginForm, searchClient
 from .enums import Headers, DatabaseColumns
+from .forms import registerClient, loginForm, searchClient, searchClientByCurp, updateClientForm, registerPaymentForm
+import datetime
 
 # Create your views here.
 #proteccion contra no autenticacion
@@ -83,13 +85,50 @@ def createAlumno(request):
             })
     
 @login_required
-def updateAulmno(request):
+def updateAlumno(request):
     return render(request,'updateClient.html',{'context':'Modificar alumno'})
 
 @login_required
 def deleteAlumno(request):
-    return render(request,'deleteClient.html',{'context':'Eliminar alumno'})
+    return render(request, 'deleteClient.html', {
+        'context': 'Eliminar alumno',
+        'error': '',
+        'alumno': None
+    })
 
+@login_required
+def buscar_alumno_eliminar(request):
+    if request.method == "POST":
+        curp = request.POST.get('curp_busqueda')
+        try:
+            alumno = Cliente.objects.get(curp=curp)
+            return render(request, 'deleteClient.html', {
+                'context': 'Eliminar alumno',
+                'alumno': alumno,
+                'error': ''
+            })
+        except Cliente.DoesNotExist:
+            return render(request, 'deleteClient.html', {
+                'context': 'Eliminar alumno',
+                'alumno': None,
+                'error': 'No se encontró ningún alumno con ese CURP'
+            })
+    return redirect('/admon/alumno/delet')
+
+@login_required
+def eliminar_alumno(request, curp):
+    if request.method == "POST":
+        try:
+            alumno = Cliente.objects.get(curp=curp)
+            alumno.delete()
+            return redirect('/admon/alumno/')
+        except Cliente.DoesNotExist:
+            return render(request, 'deleteClient.html', {
+                'context': 'Eliminar alumno',
+                'alumno': None,
+                'error': 'No se encontró ningún alumno con ese CURP'
+            })
+    return redirect('/admon/alumno/delet')
 @login_required
 def createPago(request):
     return render(request, 'pagoRegister.html',{'context':'Registrar pago'})
@@ -129,3 +168,139 @@ def login_view(request):
 #pagina de logout
 def logout_view(request):
     return render(request,'logout.html',{'context':'Logout'})
+
+@login_required
+def createPago(request):
+    return render(request, 'pagoRegister.html', {
+        'context': 'Registrar pago',
+        'error': '',
+        'alumno': None
+    })
+
+@login_required
+def buscar_alumno_pago(request):
+    if request.method == "POST":
+        curp = request.POST.get('curp_busqueda')
+        try:
+            alumno = Cliente.objects.get(curp=curp)
+            # Crear formulario con el monto predeterminado
+            initial_data = {
+                'monto': alumno.id_plan.mensualidad,
+                'fecha_pago': datetime.date.today(),
+                'tipo': 'Efectivo',
+                'retrasado': False
+            }
+            form = registerPaymentForm(initial=initial_data)
+            return render(request, 'pagoRegister.html', {
+                'context': 'Registrar pago',
+                'alumno': alumno,
+                'form': form,
+                'error': ''
+            })
+        except Cliente.DoesNotExist:
+            return render(request, 'pagoRegister.html', {
+                'context': 'Registrar pago',
+                'alumno': None,
+                'error': 'No se encontró ningún alumno con ese CURP'
+            })
+    return redirect('/admon/pago/register')
+
+@login_required
+def registrar_pago(request, curp):
+    if request.method == "POST":
+        try:
+            alumno = Cliente.objects.get(curp=curp)
+            # Registrar el pago
+            Pago.objects.create(
+                monto=request.POST['monto'],
+                fecha_pago=request.POST['fecha_pago'],
+                tipo=request.POST['tipo'],
+                retrasado='retrasado' in request.POST,
+                curp=alumno
+            )
+            return redirect('/admon/alumno/')
+        except Exception as e:
+            form = registerPaymentForm(request.POST)
+            return render(request, 'pagoRegister.html', {
+                'context': 'Registrar pago',
+                'alumno': {'curp': curp},
+                'form': form,
+                'error': f'Error al registrar pago: {str(e)}'
+            })
+    return redirect('/admon/pago/register')
+
+@login_required
+def buscar_alumno(request):
+    if request.method == "POST":
+        curp = request.POST.get('curp_busqueda')
+        try:
+            alumno = Cliente.objects.get(curp=curp)
+            # Crear formulario con datos del alumno
+            initial_data = {
+                'nombre': alumno.nombre,
+                'direccion': alumno.direccion,
+                'telefono': alumno.telefono,
+                'correo': alumno.correo,
+                'fecha_nac': alumno.fecha_nac,
+                'es_plan_familiar': alumno.id_plan.id_plan == 'P-F',
+            }
+            
+            # Si tiene plan familiar, buscar el CURP del familiar
+            if alumno.id_plan.id_plan == 'P-F':
+                # Aquí deberías implementar la lógica para encontrar el CURP del familiar
+                # Por ahora lo dejamos vacío
+                initial_data['curp_familiar'] = ''
+                
+            form = updateClientForm(initial=initial_data)
+            return render(request, 'updateClient.html', {
+                'context': 'Actualizar alumno',
+                'alumno': alumno,
+                'form': form,
+                'error': ''
+            })
+        except Cliente.DoesNotExist:
+            return render(request, 'updateClient.html', {
+                'context': 'Actualizar alumno',
+                'alumno': None,
+                'error': 'No se encontró ningún alumno con ese CURP'
+            })
+    return redirect('/admon/alumno/update')
+@login_required
+def actualizar_alumno(request, curp):
+    if request.method == "POST":
+        try:
+            alumno = Cliente.objects.get(curp=curp)
+            # Actualizar datos del alumno
+            alumno.nombre = request.POST['nombre']
+            alumno.direccion = request.POST['direccion']
+            alumno.telefono = request.POST['telefono']
+            alumno.correo = request.POST['correo']
+            alumno.fecha_nac = request.POST['fecha_nac']
+            
+            # Verificar si cambió el plan
+            es_plan_familiar = 'es_plan_familiar' in request.POST
+            if es_plan_familiar:
+                alumno.id_plan = Plan.objects.get(id_plan="P-F")
+                # Si hay CURP familiar, actualizar ese alumno también
+                curp_familiar = request.POST.get('curp_familiar')
+                if curp_familiar:
+                    try:
+                        familiar = Cliente.objects.get(curp=curp_familiar)
+                        familiar.id_plan = Plan.objects.get(id_plan="P-F")
+                        familiar.save()
+                    except Cliente.DoesNotExist:
+                        pass
+            else:
+                alumno.id_plan = Plan.objects.get(id_plan="P-R")
+                
+            alumno.save()
+            return redirect('/admon/alumno/')
+        except Exception as e:
+            form = updateClientForm(request.POST)
+            return render(request, 'updateClient.html', {
+                'context': 'Actualizar alumno',
+                'alumno': {'curp': curp},
+                'form': form,
+                'error': f'Error al actualizar: {str(e)}'
+            })
+    return redirect('/admon/alumno/update')

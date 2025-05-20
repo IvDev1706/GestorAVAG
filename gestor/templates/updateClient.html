@@ -1,8 +1,93 @@
 {% extends 'baseTemplate.html' %}
 
 {% block content %}
-    <div class="w-75 bg-light border border-3 rounded border-dark my-1 mx-auto p-2">
-        <h2>Cambiar datos de alumno</h2>
-        <hr>
-    </div>
+<div style="border: 2px solid black; border-radius: 10px; padding: 20px; margin: 20px; background-color: white;">
+    <h2 class="text-center">Actualizar datos de alumno</h2>
+    
+    {% if not alumno %}
+    <form method="POST" action="/admon/alumno/update/buscar" class="w-100 my-0 mx-auto">
+        {% csrf_token %}
+        <div class="w-100 p-1 my-2 mx-auto">
+            <label for="curp_busqueda" class="fw-bold fs-4">Inserte un CURP para buscar al alumno:</label>
+            <div class="d-flex">
+                <input type="text" name="curp_busqueda" id="curp_busqueda" class="form-control bg-light" placeholder="CURP (18 digs)">
+                <button type="submit" class="btn btn-danger border border-2 border-dark ms-2" style="background-color: red; color: white;">Buscar</button>
+            </div>
+        </div>
+        <div class="w-100 text-danger text-center">{{ error }}</div>
+    </form>
+    {% else %}
+    <form method="POST" action="/admon/alumno/update/{{ alumno.curp }}/" class="w-100 my-0 mx-auto">
+        {% csrf_token %}
+        
+        <div class="row mb-3">
+            <div class="col-12">
+                <label for="curp_busqueda" class="fw-bold fs-4">Inserte un CURP para buscar al alumno:</label>
+                <input type="text" value="{{ alumno.curp }}" class="form-control bg-light" readonly>
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="nombre" class="fw-bold fs-4">Nombre:</label>
+                <input type="text" name="nombre" id="nombre" class="form-control bg-light" value="{{ form.nombre.value|default:'' }}">
+            </div>
+            <div class="col-md-6">
+                <label for="correo" class="fw-bold fs-4">Correo:</label>
+                <input type="email" name="correo" id="correo" class="form-control bg-light" value="{{ form.correo.value|default:'' }}">
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="direccion" class="fw-bold fs-4">Dirección:</label>
+                <input type="text" name="direccion" id="direccion" class="form-control bg-light" value="{{ form.direccion.value|default:'' }}">
+            </div>
+            <div class="col-md-6">
+                <label for="fecha_nac" class="fw-bold fs-4">Fecha de nacimiento:</label>
+                <input type="date" name="fecha_nac" id="fecha_nac" class="form-control bg-light" value="{{ form.fecha_nac.value|default:'' }}">
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="telefono" class="fw-bold fs-4">Teléfono:</label>
+                <input type="tel" name="telefono" id="telefono" class="form-control bg-light" value="{{ form.telefono.value|default:'' }}">
+            </div>
+        </div>
+        
+        <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+                <label for="es_plan_familiar" class="fw-bold fs-4">Plan familiar:</label>
+                <input type="checkbox" name="es_plan_familiar" id="es_plan_familiar" class="form-check-input ms-2" style="transform: scale(1.5);" {% if form.es_plan_familiar.value %}checked{% endif %}>
+            </div>
+            <div class="col-md-9">
+                <label for="curp_familiar" class="fw-bold fs-4">CURP del familiar:</label>
+                <input type="text" name="curp_familiar" id="curp_familiar" class="form-control bg-light" value="{{ form.curp_familiar.value|default:'' }}" {% if not form.es_plan_familiar.value %}disabled{% endif %}>
+                <small class="text-muted">*este campo solo será necesario si se marca la casilla de plan familiar*</small>
+            </div>
+        </div>
+        
+        <div class="w-100 text-danger text-center">{{ error }}</div>
+        
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-danger border border-2 border-dark px-5 py-2" style="background-color: red; color: white; font-size: 1.2rem;">Actualizar</button>
+        </div>
+    </form>
+    {% endif %}
+</div>
+
+<script>
+    // Script para habilitar/deshabilitar el campo CURP familiar
+    document.addEventListener('DOMContentLoaded', function() {
+        const planFamiliarCheckbox = document.getElementById('es_plan_familiar');
+        const curpFamiliarInput = document.getElementById('curp_familiar');
+        
+        if (planFamiliarCheckbox && curpFamiliarInput) {
+            planFamiliarCheckbox.addEventListener('change', function() {
+                curpFamiliarInput.disabled = !this.checked;
+            });
+        }
+    });
+</script>
 {% endblock %}
