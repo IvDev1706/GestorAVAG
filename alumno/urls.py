@@ -10,6 +10,7 @@ urlpatterns = [
     path('alumno/payment/',cliente_payment),
     path('alumno/payment/success/',succes_pay),
     path('alumno/payment/abort/',aborted_pay),
+    path('alumno/payment/transfer/<str:monto>', comprobante_trans),
     path('alumno/checkout/',checkout_session),
     path('stripe/webhook/',stripe_webhook)
 ]

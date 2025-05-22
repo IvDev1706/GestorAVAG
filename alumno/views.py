@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, FileResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from datetime import datetime
 from decimal import Decimal
 import json
+import os
+from docx import Document
 import stripe
 import stripe.error
 from .forms import LoginForm
@@ -173,6 +175,7 @@ def stripe_webhook(request):
         
     
     return HttpResponse(status=200)
+
 def succes_pay(request):
     #proteccion de ruta
     curp = request.session.get('cliente_curp')
@@ -190,6 +193,24 @@ def aborted_pay(request):
         return redirect('/')
     
     return render(request,'abortedPayView.html',{'context':'Pago no realizado'})
+
+#ruta de archivo
+def comprobante_trans(request, monto):
+    # Cargar plantilla .docx
+    ruta_plantilla = os.path.join(settings.MEDIA_ROOT, 'comp_transferencia.docx')
+
+    doc = Document(ruta_plantilla)
+
+    # Reemplazar {{precio}} en las tablas
+    for tabla in doc.tables:
+        for fila in tabla.rows:
+            for celda in fila.cells:
+                if '{{monto}}' in celda.text:
+                    celda.text = celda.text.replace('{{monto}}', f"${monto}")
+
+    doc.save(ruta_plantilla)
+    
+    return FileResponse(open(ruta_plantilla,"rb"), as_attachment=True, filename="comp_transferencia.docx")
 
 #ruta de cierre de sesion
 def logout_view(request):

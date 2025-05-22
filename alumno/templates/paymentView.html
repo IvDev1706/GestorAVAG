@@ -20,10 +20,9 @@
             <b>Fecha:</b> {{ fecha }}<br>
             <b>Estatus: </b> {% if paid %} pagado  {% else %} sin pagar {% endif %}</br>
             <br>
-            <div class="w-100 p-1 d-flex justify-content-around">
+            <div class="w-75 p-1 d-flex justify-content-around mx-auto">
                 <button {% if paid %} disabled {% endif %}  class="btn btn-primary border border-2 border-dark rounded-pill p-2" id="checkout-button">Pagar con tarjeta</button>
-                <button {% if paid %} disabled {% endif %} class="btn btn-primary border border-2 border-dark rounded-pill p-2">Pagar con paypal</button>
-                <button {% if paid %} disabled {% endif %} class="btn btn-primary border border-2 border-dark rounded-pill p-2">Pago por transferencia</button>
+                <button {% if paid %} disabled {% endif %} class="btn btn-primary border border-2 border-dark rounded-pill p-2" id="transfer-button">Pago por transferencia</button>
             </div>
         </div>
     </div>
