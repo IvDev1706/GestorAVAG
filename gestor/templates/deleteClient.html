@@ -1,24 +1,58 @@
 {% extends 'baseTemplate.html' %}
 
 {% block content %}
-    <div class="w-75 bg-light border border-3 rounded border-dark my-1 mx-auto p-2">
-        <h2 class="text-center">Eliminar alumno</h2>
-        <hr>
+<div style="background-color: #d3d3d3; padding: 20px;">
+    <div style="border: 2px solid black; border-radius: 10px; padding: 20px; background-color: white;">
+        <h2 class="text-center mb-4">Eliminar alumno</h2>
         
-        <form method="POST" action="{% url 'buscar_alumno_eliminar' %}" class="w-full max-w-sm">
-
-            {% csrf_token %}
-            <div class="w-75 p-1 my-2 mx-auto">
-                <label for="curp_busqueda">Inserte un CURP para buscar al alumno:</label>
-                <div class="d-flex">
-                    <input type="text" name="curp_busqueda" id="curp_busqueda" class="form-control" placeholder="CURP (18 digs)">
-                    <button type="submit" class="btn btn-danger border border-2 border-dark rounded-pill ms-2">Buscar</button>
-                </div>
+        {% if alumnos_con_retraso %}
+        <div class="mb-4">
+            <h3 class="text-center">Alumnos con más de 2 meses de retraso</h3>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>CURP</th>
+                            <th>Nombre</th>
+                            <th>Último pago</th>
+                            <th>Retraso</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in alumnos_con_retraso %}
+                        <tr>
+                            <td>{{ item.alumno.curp }}</td>
+                            <td>{{ item.alumno.nombre }}</td>
+                            <td>{{ item.ultimo_pago }}</td>
+                            <td>{{ item.meses_retraso }}</td>
+                            <td>
+                                <form method="POST" action="/admon/alumno/delete/{{ item.alumno.curp }}/">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            <div class="w-100 text-danger text-center">{{ error }}</div>
-        </form>
+        </div>
+        {% endif %}
         
-        {% if alumno %}
+        <div class="mb-4">
+            <label for="curp_busqueda" class="fw-bold fs-5">Inserte un CURP para buscar al alumno:</label>
+            <div class="d-flex">
+                <form method="POST" action="/admon/alumno/delete/buscar" class="w-100 d-flex">
+                    {% csrf_token %}
+                    <input type="text" name="curp_busqueda" id="curp_busqueda" class="form-control" placeholder="CURP (18 digs)">
+                    <button type="submit" class="btn ms-2" style="background-color: #e61919; color: white; border-radius: 5px; padding: 6px 20px;">Buscar</button>
+                </form>
+            </div>
+            <div class="w-100 text-danger text-center mt-2">{{ error }}</div>
+        </div>
+        
+{% if alumno %}
             <div class="w-75 p-3 my-3 mx-auto border border-2 border-dark rounded bg-white">
                 <h4>Alumno encontrado:</h4>
                 <p><strong>CURP:</strong> {{ alumno.curp }}</p>
@@ -40,4 +74,5 @@
             </div>
         {% endif %}
     </div>
+</div>
 {% endblock %}

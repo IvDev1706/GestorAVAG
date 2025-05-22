@@ -94,30 +94,43 @@ def updateAlumno(request):
 
 @login_required
 def deleteAlumno(request):
+    # Obtener la fecha actual
+    fecha_actual = datetime.datetime.now().date()
+    
+    # Calcular la fecha de hace 2 meses
+    dos_meses_atras = fecha_actual - datetime.timedelta(days=60)
+    
+    # Lista para almacenar alumnos con retraso
+    alumnos_con_retraso = []
+    
+    # Obtener todos los alumnos
+    todos_alumnos = Cliente.objects.all()
+    
+    for alumno in todos_alumnos:
+        # Obtener el último pago del alumno
+        ultimo_pago = Pago.objects.filter(curp=alumno).order_by('-fecha_pago').first()
+        
+        # Si no hay pagos o el último pago es de hace más de 2 meses, añadir a la lista
+        if not ultimo_pago or ultimo_pago.fecha_pago < dos_meses_atras:
+            # Calcular meses de retraso
+            meses_retraso = 'Sin pagos'
+            if ultimo_pago:
+                # Calcular diferencia en meses
+                meses_diff = (fecha_actual.year - ultimo_pago.fecha_pago.year) * 12 + (fecha_actual.month - ultimo_pago.fecha_pago.month)
+                meses_retraso = f"{meses_diff} meses"
+            
+            alumnos_con_retraso.append({
+                'alumno': alumno,
+                'ultimo_pago': ultimo_pago.fecha_pago if ultimo_pago else 'Sin pagos',
+                'meses_retraso': meses_retraso
+            })
+    
     return render(request, 'deleteClient.html', {
         'context': 'Eliminar alumno',
         'error': '',
-        'alumno': None
+        'alumno': None,
+        'alumnos_con_retraso': alumnos_con_retraso
     })
-
-@login_required
-def buscar_alumno_eliminar(request):
-    if request.method == "POST":
-        curp = request.POST.get('curp_busqueda')
-        try:
-            alumno = Cliente.objects.get(curp=curp)
-            return render(request, 'deleteClient.html', {
-                'context': 'Eliminar alumno',
-                'alumno': alumno,
-                'error': ''
-            })
-        except Cliente.DoesNotExist:
-            return render(request, 'deleteClient.html', {
-                'context': 'Eliminar alumno',
-                'alumno': None,
-                'error': 'No se encontró ningún alumno con ese CURP'
-            })
-    return redirect('/admon/alumno/delet')
 
 @login_required
 def eliminar_alumno(request, curp):
@@ -132,7 +145,8 @@ def eliminar_alumno(request, curp):
                 'alumno': None,
                 'error': 'No se encontró ningún alumno con ese CURP'
             })
-    return redirect('/admon/alumno/delet')
+    return redirect('/admon/alumno/delete')
+
 @login_required
 def createPago(request):
     return render(request, 'pagoRegister.html',{'context':'Registrar pago'})
@@ -214,15 +228,37 @@ def registrar_pago(request, curp):
     if request.method == "POST":
         try:
             alumno = Cliente.objects.get(curp=curp)
-            # Registrar el pago
+            
+            # Obtener la fecha de pago del formulario
+            fecha_pago_str = request.POST.get('fecha_pago')
+            fecha_pago = datetime.datetime.strptime(fecha_pago_str, '%Y-%m-%d').date()
+            
+            # Verificar si ya existe un pago para este alumno en el mismo mes y año
+            pagos_existentes = Pago.objects.filter(
+                curp=alumno,
+                fecha_pago__year=fecha_pago.year,
+                fecha_pago__month=fecha_pago.month
+            )
+            
+            if pagos_existentes.exists():
+                # Ya existe un pago para este mes y año
+                return render(request, 'pagoRegister.html', {
+                    'context': 'Registrar pago',
+                    'alumno': alumno,
+                    'form': registerPaymentForm(request.POST),
+                    'error': f'Ya existe un pago registrado para {alumno.nombre} en el mes {fecha_pago.month}/{fecha_pago.year}'
+                })
+            
+            # Si no existe un pago para este mes, registrarlo
             Pago.objects.create(
                 monto=request.POST['monto'],
-                fecha_pago=request.POST['fecha_pago'],
+                fecha_pago=fecha_pago,
                 tipo=request.POST['tipo'],
                 retrasado='retrasado' in request.POST,
                 curp=alumno
             )
             return redirect('/admon/alumno/')
+            
         except Exception as e:
             form = registerPaymentForm(request.POST)
             return render(request, 'pagoRegister.html', {
@@ -308,3 +344,71 @@ def actualizar_alumno(request, curp):
                 'error': f'Error al actualizar: {str(e)}'
             })
     return redirect('/admon/alumno/update')
+@login_required
+def registrar_pago(request, curp):
+    if request.method == "POST":
+        try:
+            alumno = Cliente.objects.get(curp=curp)
+            
+            # Obtener el mes y año de la fecha de pago
+            fecha_pago = request.POST['fecha_pago']
+            fecha_obj = datetime.datetime.strptime(fecha_pago, '%Y-%m-%d')
+            mes = fecha_obj.month
+            año = fecha_obj.year
+            
+            # Verificar si ya existe un pago para este mes y año
+            pago_existente = Pago.objects.filter(
+                curp=alumno,
+                fecha_pago__month=mes,
+                fecha_pago__year=año
+            ).exists()
+            
+            if pago_existente:
+                # Ya existe un pago para este mes
+                form = registerPaymentForm(request.POST)
+                return render(request, 'pagoRegister.html', {
+                    'context': 'Registrar pago',
+                    'alumno': alumno,
+                    'form': form,
+                    'error': f'Ya existe un pago registrado para {alumno.nombre} en el mes {mes}/{año}'
+                })
+            
+            # Registrar el pago si no existe uno para este mes
+            Pago.objects.create(
+                monto=request.POST['monto'],
+                fecha_pago=fecha_pago,
+                tipo=request.POST['tipo'],
+                retrasado='retrasado' in request.POST,
+                curp=alumno
+            )
+            return redirect('/admon/alumno/')
+        except Exception as e:
+            form = registerPaymentForm(request.POST)
+            return render(request, 'pagoRegister.html', {
+                'context': 'Registrar pago',
+                'alumno': {'curp': curp},
+                'form': form,
+                'error': f'Error al registrar pago: {str(e)}'
+            })
+    return redirect('/admon/pago/register')
+
+
+@login_required
+def buscar_alumno_eliminar(request):
+    if request.method == "POST":
+        curp = request.POST.get('curp_busqueda')
+        try:
+            alumno = Cliente.objects.get(curp=curp)
+            return render(request, 'deleteClient.html', {
+                'context': 'Eliminar alumno',
+                'alumno': alumno,
+                'error': ''
+            })
+        except Cliente.DoesNotExist:
+            return render(request, 'deleteClient.html', {
+                'context': 'Eliminar alumno',
+                'alumno': None,
+                'error': 'No se encontró ningún alumno con ese CURP'
+            })
+    return redirect('/admon/alumno/delete')
+
