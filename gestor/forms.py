@@ -35,7 +35,7 @@ class updateClientForm(forms.Form):
 
 # Formulario de registro de pago
 class registerPaymentForm(forms.Form):
-    monto = forms.DecimalField(label="Monto:", max_digits=10, decimal_places=2, widget=forms.NumberInput(attrs={"style": "float: right;", "readonly": "readonly"}))
+    monto = forms.DecimalField(label="Monto:", max_digits=10, decimal_places=2, widget=forms.NumberInput(attrs={"style": "float: right;"}))
     fecha_pago = forms.DateField(label="Fecha de pago:", widget=forms.DateInput(attrs={"style": "float: right;", "type": "date"}))
     tipo = forms.ChoiceField(label="Forma de pago:", choices=[('Efectivo', 'Efectivo')], widget=forms.Select(attrs={"style": "float: right;"}))
     retrasado = forms.BooleanField(label="¿Pago con retraso?", required=False)
